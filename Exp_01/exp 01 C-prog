@@ -1,0 +1,21 @@
+#include <stdio.h>
+int dfa[3][2] = {{1, 2}, {1, 2}, {1, 2}};
+int start = 0;
+int accept = 1;
+int main() {
+  char input[100];
+  printf("Enter an input string: ");
+  scanf("%s", input);
+  int state = start;
+  for (int i = 0; input[i] != '\0'; i++) {
+    char c = input[i];
+    int col = (c == 'a') ? 0 : 1;
+    state = dfa[state][col];
+  }
+  if (state == accept) {
+    printf("Accepted\n");
+  } else {
+    printf("Rejected\n");
+  }
+  return 0;
+}
