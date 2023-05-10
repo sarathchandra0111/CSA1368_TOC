@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STATES 100
+#define MAX_SYMBOLS 100
+
+int n, m, s, f[MAX_STATES], e[MAX_STATES][MAX_STATES], t[MAX_STATES][MAX_SYMBOLS][MAX_STATES];
+
+void epsilon_closure(int state, int closure[])
+{
+    int i, j, k, top = 0, stack[MAX_STATES], visited[MAX_STATES];
+
+    for(i = 0; i < n; i++)
+        visited[i] = 0;
+
+    stack[top++] = state;
+    closure[state] = 1;
+    visited[state] = 1;
+
+    while(top > 0)
+    {
+        int cur = stack[--top];
+
+        for(i = 0; i < e[cur][0]; i++)
+        {
+            int next = e[cur][i+1];
+
+            if(!visited[next])
+            {
+                visited[next] = 1;
+                closure[next] = 1;
+                stack[top++] = next;
+            }
+        }
+    }
+}
+
+int main()
+{
+    int i, j, k, q, closure[MAX_STATES];
+
+    printf("Enter the number of states: ");
+    scanf("%d", &n);
+
+    printf("Enter the number of input symbols: ");
+    scanf("%d", &m);
+
+    printf("Enter the start state: ");
+    scanf("%d", &s);
+
+    printf("Enter the number of final states: ");
+    scanf("%d", &q);
+
+    printf("Enter the final states: ");
+
+    for(i = 0; i < q; i++)
+        scanf("%d", &f[i]);
+
+    printf("Enter the transition function:\n");
+
+    for(i = 0; i < n; i++)
+    {
+        for(j = 0; j < m; j++)
+        {
+            printf("delta(%d, %d): ", i, j);
+            scanf("%d", &t[i][j][0]);
+
+            for(k = 0; k < t[i][j][0]; k++)
+                scanf("%d", &t[i][j][k+1]);
+        }
+
+        printf("epsilon(%d): ", i);
+        scanf("%d", &e[i][0]);
+
+        for(j = 0; j < e[i][0]; j++)
+            scanf("%d", &e[i][j+1]);
+    }
+
+    printf("\nEpsilon-Closure Table:\n");
+    printf("-----------------------\n");
+
+    for(i = 0; i < n; i++)
+    {
+        memset(closure, 0, sizeof(closure));
+        epsilon_closure(i, closure);
+
+        printf("epsilon-closure(%d): ", i);
+
+        for(j = 0; j < n; j++)
+            if(closure[j])
+                printf("%d ", j);
+
+        printf("\n");
+    }
+
+    return 0;
+}
